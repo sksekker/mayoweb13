@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corazón de Amor en Diferentes Idiomas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #ff3366;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.7);
+            letter-spacing: 2px;
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            background-color: rgba(255, 51, 102, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .music-selector {
+            background-color: rgba(26, 26, 26, 0.8);
+            color: #ff3366;
+            border: 1px solid #ff3366;
+            padding: 8px;
+            border-radius: 5px;
+            margin-right: 10px;
+            outline: none;
+        }
+        
+        .music-selector option {
+            background-color: #1a1a1a;
+            color: #ff3366;
+        }
+        
+        .music-label {
+            color: #ff3366;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .love-word {
+            position: absolute;
+            color: #ff3366;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 51, 102, 0.8);
+            animation: moveAlongHeart 10s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes moveAlongHeart {
+            0% {
+                opacity: 0;
+                transform: translateX(0) translateY(0);
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(0) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Corazón de Amor</h1>
+    <div class="heart-container" id="heart"></div>
+    <audio src="Mass Anasthesia (mp3cut.net).mp3" autoplay></audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Array de "te amo" en diferentes idiomas - Selección más reducida
+            const loveWords = [
+                "Te amo", // Español
+                "I love you", // Inglés
+                "Je t'aime", // Francés
+                "Ti amo", // Italiano
+                "Ich liebe dich", // Alemán
+                "Te quiero", // Español
+                "愛してる", // Japonés
+                "我爱你", // Chino
+                "사랑해", // Coreano
+                "Я люблю тебя", // Ruso
+                "أحبك", // Árabe
+                "Σ'αγαπώ", // Griego
+                "Jag älskar dig", // Sueco
+                "Kocham cię", // Polaco
+                "Seni seviyorum", // Turco
+            ];
+
+
+            // Definir puntos en forma de corazón (coordenadas relativas)
+            function heartShape(t, scale) {
+                scale = scale || 10;
+                // Fórmula paramétrica para un corazón
+                return {
+                    x: 16 * Math.pow(Math.sin(t), 3) * scale,
+                    y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * scale
+                };
+            }
+
+            const heartContainer = document.getElementById('heart');
+            const containerWidth = heartContainer.offsetWidth;
+            const containerHeight = heartContainer.offsetHeight;
+            const centerX = containerWidth / 2;
+            const centerY = containerHeight / 2;
+            const scale = 9; // Ajusta este valor para cambiar el tamaño del corazón
+
+            // Genera puntos alrededor de la forma del corazón
+            const points = [];
+            const numPoints = 50; // Número aún más reducido de palabras
+            
+            for (let i = 0; i < numPoints; i++) {
+                const t = (i / numPoints) * 2 * Math.PI;
+                const point = heartShape(t, scale);
+                points.push({
+                    x: centerX + point.x,
+                    y: centerY + point.y
+                });
+            }
+
+            // Crear y animar las palabras de amor
+            let wordElements = [];
+            
+            points.forEach((point, index) => {
+                const loveWord = document.createElement('div');
+                loveWord.className = 'love-word';
+                loveWord.textContent = loveWords[index % loveWords.length];
+                loveWord.style.left = `${point.x}px`;
+                loveWord.style.top = `${point.y}px`;
+                
+                // Establecer un retraso aleatorio para cada palabra
+                const delay = (index / numPoints) * 12;
+                loveWord.style.animationDelay = `${delay}s`;
+                
+                heartContainer.appendChild(loveWord);
+                wordElements.push(loveWord);
+            });
+            
+            // Función para mover las palabras a lo largo del contorno del corazón
+            function animateWords() {
+                const time = Date.now() / 1000;
+                
+                wordElements.forEach((element, index) => {
+                    const startPosition = index / numPoints;
+                    const position = (startPosition + (time / 6)) % 1;
+                    const t = position * 2 * Math.PI;
+                    
+                    const point = heartShape(t, scale);
+                    element.style.left = `${centerX + point.x}px`;
+                    element.style.top = `${centerY + point.y}px`;
+                });
+                
+                requestAnimationFrame(animateWords);
+            }
+            
+            animateWords();
+        });
+    </script>
+</body>
+</html>
