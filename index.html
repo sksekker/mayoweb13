@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>waaaa</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #ff3366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.7);
+            margin-bottom: 30px;
+        }
+
+        #enterButton {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #ff3366;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #enterButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.9);
+        }
+        
+        .music-info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #ff8fab;
+        }
+    </style>
+</head>
+<body>
+    <h1>daleeeeee click</h1>
+    <button id="enterButton">aqui clixs❤️</button>
+    <div class="music-info" id="musicInfo"></div>
+
+    <audio id="bg-music" loop src="sound/Mass Anasthesia (mp3cut.net).mp3"></audio>
+    <script>
+        
+        const audio = document.getElementById('bg-music');
+        const enterButton = document.getElementById('enterButton');
+        const musicInfo = document.getElementById('musicInfo');
+        
+        // Intenta iniciar la música al hacer clic en el botón
+        enterButton.addEventListener('click', function() {
+            // Primero intenta reproducir la música
+            audio.play()
+                .then(() => {
+                    // Si la reproducción es exitosa, redirige a la página del corazón
+                    window.location.href = "corazon.html";
+                })
+                .catch(error => {
+                    // Si hay error, muestra mensaje y permite reintentar
+                    musicInfo.textContent = "Por favor, haz clic nuevamente para permitir la música";
+                    console.error("Error de reproducción:", error);
+                    
+                    // Cambia el botón para permitir reintento
+                    enterButton.textContent = "Permitir música y entrar";
+                    
+                    // Configura un nuevo listener para el segundo intento
+                    enterButton.onclick = function() {
+                        audio.play()
+                            .then(() => {
+                                window.location.href = "corazon.html";
+                            })
+                            .catch(e => {
+                                musicInfo.textContent = "Error al reproducir. Redirigiendo sin música...";
+                                console.error(e);
+                                setTimeout(() => {
+                                    window.location.href = "corazon.html";
+                                }, 1500);
+                            });
+                    };
+                });
+        });
+        
+        // Guarda el estado del audio para compartir entre páginas
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('audioCurrentTime', audio.currentTime);
+            localStorage.setItem('audioIsPlaying', !audio.paused);
+        });
+    </script>
+</body>
+</html>
